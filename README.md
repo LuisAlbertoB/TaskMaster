@@ -212,3 +212,15 @@ Existen dos opciones disponibles para asociar imagenes a tareas:
      - `prioridad` (Text): 3
      - `imagen_file` (**File**): Seleccionar archivo de imagen
      - `tag_ids` (Text): 1
+
+---
+
+## 8. Credenciales por Defecto del Superusuario
+
+El proceso de seeding inicial crea automaticamente la cuenta de superusuario con acceso root:
+
+- **Usuario**: `superuser`
+- **Contraseña**: `Test1234!`
+- **Rol**: `superuser` (Permiso: `root`)
+
+Nota: Se recomienda cambiar la contraseña en entornos de produccion mediante el endpoint `PUT /api/users/1/` o ejecutando `python manage.py changepassword superuser`.
