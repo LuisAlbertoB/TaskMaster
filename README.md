@@ -234,3 +234,36 @@ python manage.py create_superuser
 Este comando utilizará siempre la misma contraseña por defecto (`Test1234!`) y, en caso de que el superusuario ya exista, mostrará un mensaje indicándolo sin realizar duplicaciones.
 
 Nota: Se recomienda cambiar la contraseña en entornos de produccion mediante el endpoint `PUT /api/users/1/` o ejecutando `python manage.py changepassword superuser`.
+
+---
+
+## 9. Creacion Dinamica de Roles y Permisos (Comando create_role)
+
+La base de datos y los modelos de datos de TaskMaster estan construidos para soportar multiples roles de usuario con distintos niveles de permiso sin necesidad de modificar el servidor.
+
+### Nivel de Permiso "simple"
+
+- **`permission: "simple"`**: Otorga acceso completo a la gestion de **Tareas** e **Imagenes** (con privacidad por usuario y Object-Level Permissions), restringiendo la administracion global de usuarios y etiquetas.
+
+### Comando para Crear el Rol con Permiso "simple"
+
+Para crear el rol `user` con el permiso `simple`, ejecuta el siguiente comando de Python:
+
+```bash
+python manage.py create_role --role user --permission simple
+```
+
+Tambien puedes ejecutarlo sin argumentos (asume los valores por defecto `--role user --permission simple`):
+
+```bash
+python manage.py create_role
+```
+
+### Crear Roles Personalizados Adicionales
+
+Puedes utilizar el mismo comando para registrar cualquier otro rol y nivel de permiso en la base de datos:
+
+```bash
+python manage.py create_role --role editor --permission simple
+python manage.py create_role --role supervisor --permission root
+```
