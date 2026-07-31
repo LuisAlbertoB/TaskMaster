@@ -81,13 +81,13 @@ fi
 
 # 5. Esperar a que la API este lista
 echo "[INFO] Esperando inicio de la API y PostgreSQL..."
-MAX_RETRIES=30
+MAX_RETRIES=40
 RETRY_COUNT=0
 
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/api/token/ || true)
+    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/api/token/ || true)
     if [ "$HTTP_CODE" = "405" ] || [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "400" ]; then
-        echo "[SUCCESS] API respondiendo en http://localhost:8000/"
+        echo "[SUCCESS] API respondiendo en http://127.0.0.1:8000/"
         break
     fi
     echo "[INFO] Esperando a la API (Intento $((RETRY_COUNT+1))/$MAX_RETRIES)..."
@@ -97,12 +97,13 @@ done
 
 if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
     echo "[ERROR] El servicio de API no respondio dentro del tiempo esperado."
+    echo "[INFO] Revisa los logs del contenedor con: sudo docker compose -f deploy/docker-compose.yml logs api"
     exit 1
 fi
 
 # 6. Prueba de autenticacion automatizada
 echo "[INFO] Realizando prueba de autenticacion automatizada (JWT Login)..."
-LOGIN_RESPONSE=$(curl -s -X POST http://localhost:8000/api/token/ \
+LOGIN_RESPONSE=$(curl -s -X POST http://127.0.0.1:8000/api/token/ \
   -H "Content-Type: application/json" \
   -d '{"name": "superuser", "password": "Test1234!"}' || true)
 
@@ -114,5 +115,5 @@ else
 fi
 
 echo "=== DESPLIEGUE COMPLETADO EXITOSAMENTE ==="
-echo "URL Base de la API: http://localhost:8000/api/"
+echo "URL Base de la API: http://127.0.0.1:8000/api/"
 echo "Superusuario: superuser / Clave: Test1234!"

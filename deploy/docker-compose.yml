@@ -45,7 +45,6 @@ services:
       sh -c "
         python manage.py migrate --noinput &&
         python manage.py seed &&
-        python -c \"import django; django.setup(); from src.models import User; u = User.objects.filter(name='superuser').first(); (u.set_password('Test1234!'), u.save()) if u else None\" &&
         gunicorn src.wsgi:application --bind 0.0.0.0:8000 --workers 3
       "
 
