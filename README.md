@@ -106,7 +106,9 @@ TaskMaster/
     ├── services/                          # Serializadores y logica de negocio
     ├── routes/                            # Modulos de enrutamiento URL
     ├── middlewares/                       # Permisos personalizados (IsRootUser, IsOwner)
-    ├── management/commands/seed.py        # Management command Seeder
+    ├── management/commands/
+    │   ├── seed.py                        # Management command Seeder
+    │   └── create_superuser.py            # Management command para crear superusuario
     └── tests.py                           # Suite de pruebas automatizadas
 ```
 
@@ -222,5 +224,13 @@ El proceso de seeding inicial crea automaticamente la cuenta de superusuario con
 - **Usuario**: `superuser`
 - **Contraseña**: `Test1234!`
 - **Rol**: `superuser` (Permiso: `root`)
+
+También se puede crear o verificar la existencia del superusuario ejecutando el comando de gestión de Python:
+
+```bash
+python manage.py create_superuser
+```
+
+Este comando utilizará siempre la misma contraseña por defecto (`Test1234!`) y, en caso de que el superusuario ya exista, mostrará un mensaje indicándolo sin realizar duplicaciones.
 
 Nota: Se recomienda cambiar la contraseña en entornos de produccion mediante el endpoint `PUT /api/users/1/` o ejecutando `python manage.py changepassword superuser`.
