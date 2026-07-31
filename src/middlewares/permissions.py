@@ -2,10 +2,7 @@ from rest_framework import permissions
 
 
 class IsRootUser(permissions.BasePermission):
-    """
-    Permiso que solo permite acceso a usuarios cuyo rol tiene permission="root".
-    Equivalente a verificar que el usuario sea superadmin del sistema.
-    """
+
     message = "Acceso denegado. Se requiere permiso 'root'."
 
     def has_permission(self, request, view):
@@ -22,10 +19,7 @@ class IsRootUser(permissions.BasePermission):
 
 
 class CanAccessSimpleResources(permissions.BasePermission):
-    """
-    Permiso para usuarios con permission='simple' o permission='root'.
-    Permite acceso a recursos de Tareas e Imagenes.
-    """
+
     message = "Acceso denegado. Se requiere permiso 'simple' o 'root'."
 
     def has_permission(self, request, view):
@@ -43,10 +37,7 @@ class CanAccessSimpleResources(permissions.BasePermission):
 
 
 class IsOwner(permissions.BasePermission):
-    """
-    Permiso a nivel de objeto que solo permite acceso al propietario del recurso.
-    Un usuario con permission='root' tiene acceso total.
-    """
+
     message = "No tienes permiso para acceder a este recurso. Solo el propietario puede hacerlo."
 
     def has_object_permission(self, request, view, obj):

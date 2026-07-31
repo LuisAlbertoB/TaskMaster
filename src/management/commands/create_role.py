@@ -1,13 +1,3 @@
-"""
-TaskMaster — Management Command: create_role
-
-Crea o actualiza un rol de usuario con un nivel de permiso especifico.
-
-Uso:
-  python manage.py create_role --role user --permission simple
-  python manage.py create_role
-"""
-
 from django.core.management.base import BaseCommand
 from src.models import Role
 
