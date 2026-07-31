@@ -1,0 +1,57 @@
+services:
+  # ─── PostgreSQL ─────────────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: taskmaster_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - taskmaster_pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ─── Django API ─────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SECRET_KEY: django-production-key-change-me-to-a-real-secret
+      DEBUG: "False"
+      ALLOWED_HOSTS: "*"
+      DB_ENGINE: postgresql
+      DB_NAME: taskmaster_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+    volumes:
+      # Volumen persistente para imágenes subidas
+      - taskmaster_media:/app/media
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "
+        python manage.py migrate --noinput &&
+        python manage.py seed &&
+        python -c \"import django; django.setup(); from src.models import User; u = User.objects.filter(name='superuser').first(); (u.set_password('Test1234!'), u.save()) if u else None\" &&
+        gunicorn src.wsgi:application --bind 0.0.0.0:8000 --workers 3
+      "
+
+# ─── Volúmenes nombrados (persistentes) ──────────────────────────────────────
+volumes:
+  taskmaster_pgdata:
+    driver: local
+  taskmaster_media:
+    driver: local
